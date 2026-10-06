@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hornets A team capture</title>
+<style>
+:root{box-sizing:border-box;padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:#1c1c1e;color:#f2f2f2;font:15px -apple-system,system-ui,sans-serif;user-select:none}
+#app{height:100%;display:flex;flex-direction:column;gap:6px;padding:6px;min-height:600px}
+button{font:inherit;color:#fff;border:0;border-radius:8px;background:#555;min-height:40px;padding:2px 4px;position:relative}
+button:active{filter:brightness(1.3)}
+.row{display:flex;gap:6px}.row>*{flex:1}
+.sc{background:#2f6bf0;font-size:30px;font-weight:600;line-height:1;flex:0 0 78px}.sc small{display:block;font-size:12px;font-weight:400}
+.sc.t{background:#e965e9}
+.ent{flex:3;background:#2a2a2c;border-radius:8px;padding:6px 10px;display:flex;flex-direction:column;justify-content:center;font-size:14px}
+.ent b{color:#ef9f3a}.ent i{color:#999;font-style:normal;font-size:12px}
+.main{flex:1;display:grid;grid-template-columns:132px repeat(3,1fr) 200px;gap:6px;min-height:0}
+.col{display:flex;flex-direction:column;gap:5px;min-height:0}.col>button{flex:1}.col>.sp{flex:1}button:disabled{opacity:.3}
+h4{margin:0;font-size:13px;font-weight:600;color:#aaa}
+.g{background:#3f9a2e}.o{background:#ef9f3a;color:#2a1a00}.pl{background:#2f6bf0}.pl small{font-size:11px;opacity:.7;margin-right:4px}
+.srv::after{content:"";position:absolute;top:4px;right:4px;width:11px;height:11px;border-radius:50%;background:#ff3b30}
+.sel{outline:3px solid #fff}.pu{background:#8a1ff0}.th.srv{background:#c04fc0}
+.fa{background:#e8452a}.tp{background:#e965e9}
+.pn{background:#2a2a2c;border-radius:8px;padding:6px;font-size:13px;line-height:1.35}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}.grid3 button{min-height:48px}
+input,select{width:100%;min-width:0;font:inherit;padding:8px;border-radius:6px;border:1px solid #555;background:#111;color:#fff;-webkit-user-select:text;user-select:text}
+.fld{display:flex;gap:6px;align-items:center;margin:6px 0}.fld>span{flex:0 0 100px}.zg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}#setup{overflow:auto;flex:1;padding:4px}
+#se,#sr,#md{display:none}
+#st{display:flex;flex-direction:column;gap:5px;flex:0 0 235px;min-height:0}#stb{overflow:auto;flex:1;background:#2a2a2c;border-radius:8px;padding:4px 6px}#st .row button{min-height:34px;font-size:13px}.tw{overflow-x:auto;margin-bottom:6px}.tb{width:100%;border-collapse:collapse;font-size:13px}.tb th,.tb td{padding:4px 6px;text-align:right;border-bottom:1px solid #3a3a3c;white-space:nowrap}.tb th:first-child,.tb td:first-child{text-align:left}.tb th{color:#aaa;font-weight:500}.tb tr.tot td{font-weight:600;border-top:2px solid #777}.tb tr.now td{background:#33405a}#srb{flex:4;flex-wrap:wrap}#srb>*{flex:1 0 18%}
+#md{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9;align-items:center;justify-content:center}
+#md>div{background:#2a2a2c;border-radius:12px;padding:14px;width:min(440px,92%)}
+@media(max-width:900px){html,body{height:auto;overflow:auto}#app{height:auto;min-height:0}#top{flex-wrap:wrap}.ent{flex:1 0 100%;order:-1}.main{grid-template-columns:repeat(3,1fr);flex:none}.main .col{min-height:0}#us,#th{grid-column:1/-1}#us{flex-direction:row;flex-wrap:wrap}#us>button{flex:1 0 22%}#us>h4,#us>.row{flex:1 0 100%}#st{flex:none}#stb{overflow:visible}#app.lf .main{grid-template-columns:92px repeat(3,1fr)}#app.lf #us{grid-column:auto;flex-direction:column;flex-wrap:nowrap}#app.lf #us>button{flex:1 1 auto;font-size:13px}#app.lf #us>h4,#app.lf #us>.row{flex:none}#app.lf #th{grid-column:1/-1}#app.lf .col>button{font-size:13px}.col>button{min-height:48px}}
+</style></head><body><div id="app">
+<div class="row" id="hd"></div>
+<div id="setup" style="display:none"></div>
+<div id="cap" style="flex:1;display:flex;flex-direction:column;gap:6px;min-height:0">
+<div class="row" id="top"></div>
+<div class="row" id="se" style="align-items:center"><span id="sel" style="flex:1.2"></span><div class="row" id="seb" style="flex:5"></div></div>
+<div class="row" id="sr" style="align-items:center"><span id="srt" style="flex:1"></span><div class="row" id="srb"></div></div>
+<div class="main">
+<div class="col" id="us"></div>
+<div class="col" id="c1"></div><div class="col" id="c2"></div><div class="col" id="c3"></div>
+<div class="col" id="th"></div></div>
+<div id="st"></div>
+<div class="row" id="gm"></div></div></div>
+<div id="md"><div id="mdc"></div></div>
+<script>
+const NM={14:'jordyn',11:'addie',10:'ariana',5:'veronica',18:'micaela',7:'amelia',3:'ella'};
+const ROST=[14,11,10,5,18,7,3];
+const z=()=>({a:0,p:0,o:0,n:0});
+const mk=()=>({us:0,them:0,srv:'us',ours:[0,0,0,0,0,0],their:[0,0,0,0,0,0],run:{us:z(),them:z()},last:{us:null,them:null},hist:[],log:[],rc:0,ev:[]});
+var ui_lf=false;
+let games={1:mk(),2:mk(),3:mk()},G=1,S,tab='setup';
+let M={team:'A team',opp:'',date:new Date().toISOString().slice(0,10),venue:'',g1:'us',g3:'',pairs:[],fmt:{games:3,to:25,to3:15,by2:true,cap:0}};
+try{const s=JSON.parse(localStorage.getItem('hc3')||'null');if(s){games=s.games;G=s.G;M=s.M;M.pairs=M.pairs||[];M.fmt=M.fmt||{games:3,to:25,to3:15,by2:true,cap:0};if(games[G].ev.length)tab='cap'}}catch(e){}
+try{ui_lf=localStorage.getItem('hcl')==='1'}catch(e){}
+S=games[G];
+function applyServe(){[1,2,3].forEach(g=>{const x=games[g];if(!x.ev.length&&!x.us&&!x.them)x.srv=g===1?M.g1:g===2?(M.g1==='us'?'them':'us'):(M.g3||x.srv)})}
+const GL=()=>M.fmt.games===2?[1,2]:[1,2,3];
+function over(g){const x=games[g],t=g===3?M.fmt.to3:M.fmt.to,a=x.us,b=x.them,d=M.fmt.by2?2:1;if(M.fmt.cap&&Math.max(a,b)>=M.fmt.cap&&a!==b)return a>b?'us':'them';if(Math.max(a,b)>=t&&Math.abs(a-b)>=d)return a>b?'us':'them';return null}
+function setToss(t){M.g3=t;applyServe();save();R()}
+function lay(){ui.lf=!ui.lf;try{localStorage.setItem('hcl',ui.lf?'1':'0')}catch(e){}R()}
+function autoSubs(){const m=[];M.pairs.forEach(p=>{if(!p.a||!p.b)return;const eA=z=>p.az.includes(z)&&(z!==1||S.srv==='us');[[p.a,p.b,z=>eA(z)],[p.b,p.a,z=>!eA(z)]].forEach(([x,y,ok])=>{const i=S.ours.indexOf(x);if(i>=0&&!ok(i+1)&&S.ours.indexOf(y)<0){S.ours[i]=y;m.push(NM[y]+' in for '+NM[x]+' (Z'+(i+1)+')')}})});if(m.length)S.note=m.join(' · ')}
+applyServe();
+function goTab(t){tab=t;if(t==='setup')RSet();R()}
+function hdr(){document.getElementById('hd').innerHTML=`<div class="ent" style="flex:4"><div><b>${M.team}</b> vs ${M.opp||'?'} · Game ${G} · ${M.venue||'?'} · ${M.date}</div></div><button class="${tab==='setup'?'sel':''}" style="flex:.6" onclick="goTab('setup')">Setup</button><button class="${tab==='cap'?'sel':''}" style="flex:.6" onclick="goTab('cap')">Capture</button><button style="flex:.6" onclick="lay()">Layout</button>`}
+function setZ(i,v){v=+v;if(v){const j=S.ours.indexOf(v);if(j>=0)S.ours[j]=0}S.ours[i]=v;save();RSet()}
+function tg(key,lab){const c=M[key];return `<div class="fld"><span style="flex:1">${lab}</span><button class="${c==='us'?'pl sel':''}" onclick="M.${key}='us';applyServe();save();RSet();hdr()">We serve</button><button class="${c==='them'?'tp sel':''}" onclick="M.${key}='them';applyServe();save();RSet();hdr()">They serve</button>${key==='g3'?`<button class="${c?'':'sel'}" onclick="M.g3='';save();RSet()">Decide later</button>`:''}</div>`}
+function setPair(i,k,v){M.pairs[i][k]=+v;save();RSet()}
+function togZ(i,z){const a=M.pairs[i].az,j=a.indexOf(z);j>=0?a.splice(j,1):a.push(z);a.sort();save();RSet()}
+function pairUI(){return M.pairs.map((p,i)=>{const zs=[1,2,3,4,5,6],bz=zs.filter(z=>!p.az.includes(z)),
+ sel=k=>`<select onchange="setPair(${i},'${k}',this.value)"><option value="0">-</option>${RS.map(n=>`<option value="${n}"${p[k]===n?' selected':''}>${n} ${NM[n]}</option>`).join('')}</select>`;
+ return `<div class="pn" style="margin:6px 0"><div class="zg"><div><small>Player A</small>${sel('a')}</div><div><small>Player B (replaces A)</small>${sel('b')}</div><button style="align-self:end" onclick="M.pairs.splice(${i},1);save();RSet()">Remove</button></div>
+ <div style="margin:6px 0"><small>Zones A plays:</small></div><div class="row">${zs.map(z=>`<button class="${p.az.includes(z)?'pl sel':''}" onclick="togZ(${i},${z})">Z${z}</button>`).join('')}</div>
+ <div style="margin-top:6px"><b>${NM[p.a]||'A'}</b>: ${p.az.map(z=>'Z'+z+(z===1?' (serving)':'')).join(', ')||'none'}<br><b>${NM[p.b]||'B'}</b>: ${bz.map(z=>'Z'+z+(z===1?' (receiving)':'')).join(', ')||'none'}<br>Server: <b>${NM[p.az.includes(1)?p.a:p.b]||'?'}</b></div></div>`}).join('')}
+function RSet(){const o=S.srv==='us'?'We':'They';
+ document.getElementById('setup').innerHTML=`<h4>Match</h4>
+ <div class="fld"><span>Opponent</span><input value="${M.opp}" oninput="M.opp=this.value;save();hdr()"></div>
+ <div class="fld"><span>Date</span><input type="date" value="${M.date}" oninput="M.date=this.value;save();hdr()"></div>
+ <div class="fld"><span>Venue</span><input value="${M.venue}" oninput="M.venue=this.value;save();hdr()"></div>
+ ${tg('g1','Game 1 first serve')}
+ <div class="fld"><span style="flex:1">Game 2 first serve (automatic)</span><b>${M.g1==='us'?'They':'We'} serve</b></div>
+ ${tg('g3','Game 3 coin toss (can wait until game 3 starts)')}
+ <h4 style="margin-top:12px">Format</h4>
+ <div class="fld"><span>Games</span>${[2,3].map(n=>`<button class="${M.fmt.games===n?'pl sel':''}" onclick="M.fmt.games=${n};save();RSet()">${n}</button>`).join('')}<span>Win by 2</span><button class="${M.fmt.by2?'g sel':''}" onclick="M.fmt.by2=!M.fmt.by2;save();RSet()">${M.fmt.by2?'Yes':'No'}</button></div>
+ <div class="fld"><span>Play to</span><input type="number" inputmode="numeric" value="${M.fmt.to}" oninput="M.fmt.to=+this.value||25;save()"><span>Game 3 to</span><input type="number" inputmode="numeric" value="${M.fmt.to3}" oninput="M.fmt.to3=+this.value||15;save()"><span>Cap (0 none)</span><input type="number" inputmode="numeric" value="${M.fmt.cap||''}" oninput="M.fmt.cap=+this.value||0;save()"></div>
+ <h4 style="margin-top:12px">Sub pairs</h4><div><small>Player A plays the zones you pick (Z1 only while serving) and Player B replaces A in the others. The app subs automatically.</small></div>${pairUI()}${M.pairs.length<2?`<button style="width:100%" onclick="M.pairs.push({a:0,b:0,az:[1,2,3,4]});save();RSet()">Add sub pair</button>`:''}
+ <h4 style="margin-top:12px">Starting lineup for game ${G}</h4><div class="row" style="margin:6px 0">${GL().map(g=>`<button class="${g===G?'sel':''}" onclick="G=${g};S=games[G];RSet();hdr()">Game ${g}</button>`).join('')}</div>
+ <div>${o} serve first in game ${G}. Z1 is back right (server).</div>
+ <h4 style="margin-top:8px">Our players</h4><div class="zg">${[3,2,1,4,5,0].map(i=>`<div><small>Z${i+1}</small><select onchange="setZ(${i},this.value)"><option value="0">-</option>${RS.map(n=>{const u=S.ours.indexOf(n),used=u>=0&&u!==i;return `<option value="${n}"${S.ours[i]===n?' selected':''}${used?' style="color:#888"':''}>${n} ${NM[n]}${used?' · in Z'+(u+1):''}</option>`}).join('')}</select></div>`).join('')}</div>
+ <h4 style="margin-top:8px">Their players (jersey numbers)</h4><div class="zg">${[3,2,1,4,5,0].map(i=>`<div><small>Z${i+1}</small><input type="number" inputmode="numeric" value="${S.their[i]||''}" oninput="S.their[${i}]=parseInt(this.value)||0;save()"></div>`).join('')}</div>
+ <button class="g" style="width:100%;margin-top:12px;min-height:52px" onclick="goTab('cap')">Start capture</button>`}
+const ui={lf:ui_lf,sel:[],pend:null,their:false,edit:null,pk:null,ed:false,skip:null};
+const EARN=['ace','spike','tip','dump','down ball hit'];
+const E1=['serve','spike','tip','dump','down ball hit','free ball out','block','whose ball?'];
+const E2=['receive','dig','set','free ball receive','2nd ball return','3rd ball return','faults'];
+const snap=()=>JSON.stringify({...S,hist:0,ev:0,evn:S.ev.length,note:S.note||''});
+const hp=()=>{S.hist.push(snap());if(S.hist.length>80)S.hist.shift()};
+const FAULTS=['foot fault','net touch','double hit','lift / carry','rotation','over the net','center line','back row attack','other'];
+const RS=[...ROST].sort((a,b)=>a-b);
+function save(){try{localStorage.setItem('hc3',JSON.stringify({M,games,G}))}catch(e){}}
+function rot(t,d){if(t==='us')S.rc+=d;const a=t==='us'?S.ours:S.their;d>0?a.push(a.shift()):a.unshift(a.pop());}
+const svNum=t=>t==='us'?S.ours[0]:S.their[0];
+const isServeErr=()=>ui.pend&&ui.pend.t==='e'&&ui.pend.k==='serve';
+const isFault=()=>ui.pend&&ui.pend.t==='e'&&ui.pend.k==='faults';
+const isAtkErr=()=>ui.pend&&ui.pend.t==='e'&&['tip','spike','dump','down ball hit'].includes(ui.pend.k);
+function fsel(r){ui.pend.r=r;R()}
+function theirs(){return ui.their||(isServeErr()&&S.srv==='them')}
+function ready(){const p=ui.pend;if(!p)return false;
+ if(p.t==='g'&&p.k==='ace')return true;
+ if(isServeErr())return !!p.r;
+ if(isFault()||isAtkErr())return !!p.r&&(theirs()||ui.sel.length>0);
+ if(theirs())return true;
+ return ui.sel.length>0}
+function serr(r){if(!isServeErr())return;ui.pend.r=r;commit()}
+function commit(){if(!ready())return;const p=ui.pend,sv=S.srv,th=theirs();hp();S.note='';
+ let w;
+ if(p.t==='g')w=(p.k==='ace'&&sv==='them')?'them':'us';
+ else w=isServeErr()?(sv==='us'?'them':'us'):(th?'us':'them');
+ let who=[];
+ if(p.k==='ace'||(isServeErr()&&sv==='us'))who=svNum('us')?[svNum('us')]:[];
+ else if(!th||p.t==='g')who=ui.sel.slice();
+ const r=S.run[sv];
+ if(isServeErr())p.r==='net'?r.n++:r.o++;
+ else if(w===sv)(p.k==='ace'||(p.k==='receive'&&p.t==='e'))?r.a++:r.p++;
+ const side=p.t==='e'?(w==='us'?'THEIR ':'OUR '):'';
+ const lbl=side+p.k+(p.r?' ('+p.r+')':'')+(who.length?' - '+who.map(n=>NM[n]||n).join(' + '):'')+' > '+w;
+ S.ev.push({w,sv,t:p.t,k:p.k,r:p.r,who,rn:((S.rc%6)+6)%6+1,srvNum:svNum(sv),ace:w===sv&&(p.k==='ace'||(p.k==='receive'&&p.t==='e'))});
+ S[w]++;
+ if(w!==sv){S.last[sv]={id:svNum(sv),...r};S.run[sv]=z();S.srv=w;rot(w,1)}
+ autoSubs();S.log.push(lbl);clr();save();R()}
+function clr(){ui.sel=[];ui.pend=null;ui.their=false}
+function act(t,k){const p=ui.pend;if(p&&p.t===t&&p.k===k&&ready()){commit();return}
+ ui.pend={t,k,r:0};R()}
+function pick(n){const i=ui.sel.indexOf(n);i>=0?ui.sel.splice(i,1):ui.sel.length<2&&ui.sel.push(n);R()}
+function undo(){if(!S.hist.length)return;const h=S.hist,ev=S.ev,o=JSON.parse(h.pop());Object.assign(S,o);S.hist=h;S.ev=ev.slice(0,o.evn);clr();ui.pk=null;save();R()}
+function adj(d){hp();S[ui.edit]=Math.max(0,S[ui.edit]+d);save();R()}
+function chg(){openPk(S.srv,0)}
+function setSrv(t){hp();S.note='';S.srv=t;autoSubs();save();R()}
+function rr(t,d){hp();S.note='';rot(t,d);if(t==='us')autoSubs();save();R()}
+function openPk(team,i){ui.pk={team,i};R()}
+function setPk(v){const k=ui.pk,a=k.team==='us'?S.ours:S.their;hp();
+ const j=v?a.indexOf(v):-1;if(j>=0)a[j]=a[k.i];a[k.i]=v;ui.pk=null;save();R()}
+function skipPk(){if(ui.pk.auto)ui.skip=ui.pk.auto;ui.pk=null;R()}
+function setNum(){setPk(parseInt(document.getElementById('pkn').value)||0)}
+function sumr(t,l){const r=l?S.last[t]:S.run[t];if(!r)return'-';return `#${l?r.id:svNum(t)||'?'}: ${r.a} ace, ${r.p} pts, ${r.o} out, ${r.n} net`}
+const TY=['serve','receive','spike','dig','set','tip','dump','free ball receive','down ball hit','free ball out','block','2nd ball return','3rd ball return','whose ball?','faults'];
+const AB={serve:'Srv',receive:'Rcv',spike:'Spk',dig:'Dig',set:'Set',tip:'Tip',dump:'Dmp','free ball receive':'FBR','down ball hit':'DBH','free ball out':'FBO',block:'Blk','2nd ball return':'2nd','3rd ball return':'3rd','whose ball?':'Who',faults:'Flt'};
+const curRn=()=>((S.rc%6)+6)%6+1;
+const pct=(a,b)=>a+b?Math.round(100*a/(a+b))+'%':'-';
+const tbl=(h,rows)=>`<div class="tw"><table class="tb"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr class="${r.t?'tot':''}${r.n?' now':''}">${r.c.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</table></div>`;
+function agg(E){const P={};RS.forEach(n=>P[n]={srv:0,ace:0,pts:0,err:0,et:{}});
+ E.forEach(e=>{const x=P[e.srvNum];if(e.sv==='us'&&x){x.srv++;if(e.ace&&e.w==='us')x.ace++}
+  if(e.w==='us'&&e.t==='g'&&e.k!=='ace')e.who.forEach(n=>P[n]&&P[n].pts++);
+  if(e.t==='e'&&e.w==='them')e.who.forEach(n=>{if(P[n]){P[n].err++;P[n].et[e.k]=(P[n].et[e.k]||0)+1}})});return P}
+function stats(){const sc=ui.ss||'game',tb=ui.stt||'team',cr=curRn();
+ const E=sc==='match'?[1,2,3].flatMap(g=>games[g].ev):sc==='rot'?S.ev.filter(e=>e.rn===cr):S.ev;
+ const c=(f,L)=>(L||E).filter(f).length;let body='';
+ const sumRow=L=>{const w=c(e=>e.w==='us',L),l=c(e=>e.w==='them',L),sv=c(e=>e.sv==='us',L),ac=c(e=>e.sv==='us'&&e.ace&&e.w==='us',L),se=c(e=>e.sv==='us'&&e.t==='e'&&e.k==='serve'&&e.w==='them',L),oe=c(e=>e.t==='e'&&e.w==='them',L),te=c(e=>e.t==='e'&&e.w==='us',L);return [w,l,pct(w,l),sv,ac,se,oe,te]};
+ if(tb==='team'){const so=c(e=>e.sv==='them'&&e.w==='us'),soT=c(e=>e.sv==='them'),sp=c(e=>e.sv==='us'&&e.w==='us'),spT=c(e=>e.sv==='us'),t=sumRow();
+  body=tbl(['Team','Total'],[['Points won',t[0]],['Points lost',t[1]],['Point win %',t[2]],['Serves',t[3]],['Aces',t[4]],['Serve errors',t[5]],['Serve-point %',pct(sp,spT-sp)+` (${sp}/${spT})`],['Side-out %',pct(so,soT-so)+` (${so}/${soT})`],['Our errors',t[6]],['Their errors',t[7]]].map(x=>({c:x})));
+  const rows=['ace',...TY].map(k=>[k,c(e=>e.t==='g'&&e.w==='us'&&e.k===k),c(e=>e.t==='e'&&e.w==='them'&&e.k===k),c(e=>e.t==='e'&&e.w==='us'&&e.k===k)]).filter(r=>r[1]+r[2]+r[3]);
+  body+=tbl(['Type','Our pts','Our err','Their err'],[...rows.map(x=>({c:x})),{t:1,c:['Total',...[1,2,3].map(i=>rows.reduce((a,r)=>a+r[i],0))]}])}
+ else if(tb==='rot'){const rows=[1,2,3,4,5,6].map(n=>({n:n===cr&&sc!=='match',c:['R'+n,...sumRow(E.filter(e=>e.rn===n))]}));
+  body=tbl(['Rot','Won','Lost','Win%','Serves','Aces','S-Err','Our err','Their err'],[...rows,{t:1,c:['All',...sumRow(E)]}])}
+ else{const P=agg(E),tot=k=>RS.reduce((a,n)=>a+P[n][k],0),stot=RS.reduce((a,n)=>a+(P[n].et.serve||0),0);
+  if(tb==='pl')body=tbl(['Player','Serves','Aces','S-Err','Pts','Err','Net'],[...RS.map(n=>({c:[NM[n],P[n].srv,P[n].ace,P[n].et.serve||0,P[n].pts,P[n].err,P[n].pts+P[n].ace-P[n].err]})),{t:1,c:['Team',tot('srv'),tot('ace'),stot,tot('pts'),tot('err'),tot('pts')+tot('ace')-tot('err')]}]);
+  else{const cols=TY.filter(k=>RS.some(n=>P[n].et[k]));
+   body=cols.length?tbl(['Player',...cols.map(k=>AB[k]),'All'],[...RS.map(n=>({c:[NM[n],...cols.map(k=>P[n].et[k]||0),P[n].err]})),{t:1,c:['Team',...cols.map(k=>RS.reduce((a,n)=>a+(P[n].et[k]||0),0)),tot('err')]}]):'<div style="padding:8px;color:#999">No errors yet</div>';const rr=TY.map(k=>[AB[k],c(e=>e.t==='e'&&e.w==='them'&&e.k===k&&e.r==='out'),c(e=>e.t==='e'&&e.w==='them'&&e.k===k&&e.r==='net')]).filter(r=>r[1]+r[2]);if(rr.length)body+=tbl(['Reason','Out','Net'],rr.map(x=>({c:x})))}}
+ return `<div class="row" style="flex:0 0 34px">${[['team','Team'],['rot','Rotations'],['pl','Players'],['err','Errors']].map(([k,l])=>`<button class="${tb===k?'sel':''}" onclick="ui.stt='${k}';R()">${l}</button>`).join('')}<span style="flex:.15"></span>${[['game','Game'],['rot','This rot'],['match','Match']].map(([k,l])=>`<button class="${sc===k?'sel pu':''}" onclick="ui.ss='${k}';R()">${l}</button>`).join('')}</div><div id="stb">${body}</div>`}
+function R(){const q=id=>document.getElementById(id);
+ q('app').classList.toggle('lf',!!ui.lf);q('cap').style.display=tab==='cap'?'flex':'none';if(ui.pend&&ui.pend.t==='e'&&ui.pend.k==='receive'&&S.srv==='us')ui.pend=null;q('setup').style.display=tab==='setup'?'block':'none';hdr();
+ if(tab!=='cap'){q('md').style.display='none';return}
+ const sv=S.srv,p=ui.pend,th=theirs();
+ const key=sv+S.us+S.them+G,toss=G===3&&!M.g3&&!S.ev.length&&!S.us&&!S.them,ov=over(G);
+ if(!ui.pk&&!toss&&!svNum(sv)&&ui.skip!==key)ui.pk={team:sv,i:0,auto:key};
+ q('top').innerHTML=`<button class="sc${sv==='us'?' srv':''}" onclick="ui.edit='us';R()"><small>US</small>${S.us}</button><button class="sc t${sv==='them'?' srv':''}" onclick="ui.edit='them';R()"><small>THEM</small>${S.them}</button>
+ <div class="ent"${S.note?' style="background:#6b5a00"':''}>${S.note?`<div><b>SUB:</b> ${S.note}</div>`:''}${ov?`<div style="color:#6cc24a"><b>Game over:</b> ${ov==='us'?'we win':'they win'} ${S.us}-${S.them}</div>`:''}<div><b>${p?(th?'Their ':'')+p.k+(p.t==='e'?' error':' point'):'Pick a reason'}</b> ${isServeErr()?'':p&&p.r&&(isFault()||isAtkErr())?'('+p.r+') ':''}${isServeErr()?'':ui.sel.length?'- '+ui.sel.map(n=>NM[n]).join(' + '):p&&!ready()?'<i>tap the player(s)</i>':''}</div><i>Last: ${S.log.length?S.log[S.log.length-1]:'none'}</i></div>
+ <button onclick="chg()" style="flex:.7">Change server</button><button class="pu" onclick="undo()" style="flex:.6">Undo</button><button class="pu" style="flex:.6;background:${ready()&&!isServeErr()?'#8a1ff0':'#4b2a70'}" onclick="commit()">Enter</button>`;
+ q('se').style.display=ui.edit?'flex':'none';q('seb').innerHTML=`<button onclick="adj(-1)">-1</button><button onclick="adj(1)">+1</button><button class="${sv==='us'?'pl sel':''}" onclick="setSrv('us')">Us serving</button><button class="${sv==='them'?'tp sel':''}" onclick="setSrv('them')">Them serving</button><button onclick="ui.edit=null;R()">Done</button>`;
+ q('sel').textContent=ui.edit?(ui.edit==='us'?'Our':'Their')+' score: '+S[ui.edit]:'';
+ const bar=isServeErr()||isFault()||isAtkErr();q('sr').style.display=bar?'flex':'none';
+ if(bar){q('srt').textContent=isServeErr()?(sv==='us'?'Our':'Their')+' serve error:':(th?'Their ':'Our ')+(isAtkErr()?p.k+' error - out or net?':'fault:');
+  q('srb').innerHTML=(isServeErr()?['out','net'].map(r=>`<button class="o" onclick="serr('${r}')">${r}</button>`):(isAtkErr()?['out','net']:FAULTS).map(r=>`<button class="o${p.r===r?' sel':''}" onclick="fsel('${r}')">${r}</button>`)).join('')+`<button onclick="clr();R()">Cancel</button>`}
+ const pb=(n,i)=>`<button class="pl${ui.sel.includes(n)&&n?' sel':''}${i===0?' srv':''}" onclick="${!n||ui.ed?`openPk('us',${i})`:`pick(${n})`}"><small>Z${i+1}</small>${n?n+' '+NM[n]:'?'}</button>`;
+ const rb=n=>{const i=S.ours.indexOf(n);return `<button class="pl${ui.sel.includes(n)?' sel':''}${i===0?' srv':''}" onclick="pick(${n})"><small>${i>=0?'Z'+(i+1):'bench'}</small>${n} ${NM[n]}</button>`};
+ q('us').innerHTML=`<h4>${ui.ed?'Edit zones':'Our players'}</h4>${ui.ed?S.ours.map(pb).join(''):RS.map(rb).join('')}<div class="row"><button onclick="rr('us',-1)">&#9664;</button><button onclick="rr('us',1)">&#9654;</button></div><button class="${ui.ed?'sel':''}" style="flex:0 0 40px" onclick="ui.ed=!ui.ed;R()">Edit lineup</button>`;
+ const eb=(t,k)=>`<button class="${t==='g'?'g':k==='faults'?'fa':'o'}${p&&p.t===t&&p.k===k?' sel':''}"${t==='e'&&k==='receive'&&sv==='us'?' disabled':''} onclick="act('${t}','${k}')">${k}</button>`;
+ q('c1').innerHTML=`<h4 style="color:#6cc24a">Earned</h4>${EARN.map(k=>eb('g',k)).join('')}`;
+ q('c2').innerHTML=`<h4 style="color:#ef9f3a">Errors</h4>${E1.map(k=>eb('e',k)).join('')}`;
+ q('c3').innerHTML=`<h4>&nbsp;</h4>${E2.map(k=>eb('e',k)).join('')}${E1.length>E2.length?'<div class="sp"></div>':''}`;
+ const zi=[3,2,1,4,5,0];
+ q('th').innerHTML=`<button class="tp${ui.their?' sel':''}" style="flex:0 0 44px" onclick="ui.their=!ui.their;R()">Their player</button><h4>Their lineup (tap to edit)</h4><div class="grid3">${zi.map(i=>`<button class="th${i===0?' srv':''}" onclick="openPk('them',${i})"><small style="font-size:11px;opacity:.7">Z${i+1}</small><br>${S.their[i]||'?'}</button>`).join('')}</div>
+ <div class="row" style="flex:0 0 40px"><button onclick="rr('them',-1)">&#9664;</button><button onclick="rr('them',1)">&#9654;</button></div>
+ <div class="pn"><b>Their server</b><br>Now ${sumr('them')}<br>Last ${S.last.them?sumr('them',1):'-'}<br><b>Ours</b><br>Now ${sumr('us')}<br>Last ${S.last.us?sumr('us',1):'-'}</div>`;
+ q('gm').innerHTML=GL().map(g=>`<button class="${g===G?'sel':''}" onclick="G=${g};S=games[G];clr();ui.pk=null;applyServe();R()">Game ${g}${over(g)?' &#10003;':''}</button>`).join('');
+ {const o=q('stb'),t=o?o.scrollTop:0;q('st').innerHTML=stats();const n=q('stb');if(n)n.scrollTop=t}
+ const m=q('md'),k=ui.pk;m.style.display=(k||toss)?'flex':'none';
+ if(toss&&!k)q('mdc').innerHTML=`<div style="margin-bottom:8px">Game 3 coin toss: who serves first?</div><div class="row"><button class="pl" onclick="setToss('us')">We serve</button><button class="tp" onclick="setToss('them')">They serve</button></div>`;
+ else if(k){const cur=(k.team==='us'?S.ours:S.their)[k.i];
+  q('mdc').innerHTML=k.team==='us'?`<div style="margin-bottom:8px">${k.auto?'Who is serving for us?':'Who plays Z'+(k.i+1)+'?'}</div><div class="grid3">${RS.map(n=>`<button class="pl"${S.ours.includes(n)&&S.ours[k.i]!==n?' style="opacity:.4"':''} onclick="setPk(${n})">${n} ${NM[n]}</button>`).join('')}</div><div class="row" style="margin-top:8px"><button onclick="setPk(0)">Clear</button><button onclick="skipPk()">Skip</button></div>`
+  :`<div style="margin-bottom:8px">${k.auto?'Their server number?':'Their Z'+(k.i+1)+' number'}</div><input id="pkn" inputmode="numeric" value="${cur||''}"><div class="row" style="margin-top:8px"><button class="g" onclick="setNum()">Set</button><button onclick="skipPk()">Skip</button></div>`;
+  const e=q('pkn');if(e)e.focus()}
+}
+RSet();R();
+</script></body></html>
