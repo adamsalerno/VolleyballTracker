@@ -25,7 +25,7 @@ h4{margin:0;font-size:13px;font-weight:600;color:#aaa}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}.grid3 button{min-height:48px}
 input,select{width:100%;min-width:0;font:inherit;padding:8px;border-radius:6px;border:1px solid #555;background:#111;color:#fff;-webkit-user-select:text;user-select:text}
 .fld{display:flex;gap:6px;align-items:center;margin:6px 0}.fld>span{flex:0 0 100px}.zg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}#setup{overflow:auto;flex:1;padding:4px}
-#se,#sr,#md{display:none}.ta{width:100%;height:40vh;background:#111;color:#eee;border:1px solid #555;border-radius:6px;font-size:12px;-webkit-user-select:text;user-select:text}.stt{flex:0 0 auto}.fl2{flex-wrap:wrap}.fl2>*{flex:1 0 28%}.fld{flex-wrap:wrap}html,body{overflow-x:hidden}.tb td:first-child,.tb th:first-child{position:sticky;left:0;background:#2a2a2c}
+#se,#sr,#md{display:none}.ta{width:100%;height:40vh;background:#111;color:#eee;border:1px solid #555;border-radius:6px;font-size:12px;-webkit-user-select:text;user-select:text}.stt{flex:0 0 auto}.fl2{flex-wrap:wrap}.fl2>*{flex:1 0 28%}.fld{flex-wrap:wrap}html,body{overflow-x:hidden}html,body,button,input,select,.pn,.ent{touch-action:manipulation;-webkit-touch-callout:none}.tb td:first-child,.tb th:first-child{position:sticky;left:0;background:#2a2a2c}
 #st{display:flex;flex-direction:column;gap:5px;flex:0 0 235px;min-height:0}#stb{overflow:auto;flex:1;background:#2a2a2c;border-radius:8px;padding:4px 6px}#st .row button{min-height:34px;font-size:13px}.tw{overflow-x:auto;margin-bottom:6px}.tb{width:100%;border-collapse:collapse;font-size:13px}.tb th,.tb td{padding:4px 6px;text-align:right;border-bottom:1px solid #3a3a3c;white-space:nowrap}.tb th:first-child,.tb td:first-child{text-align:left}.tb th{color:#aaa;font-weight:500}.tb tr.tot td{font-weight:600;border-top:2px solid #777}.tb tr.now td{background:#33405a}#srb{flex:4;flex-wrap:wrap}#srb>*{flex:1 0 18%}
 #md{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9;align-items:center;justify-content:center}
 #md>div{background:#2a2a2c;border-radius:12px;padding:14px;width:min(440px,92%)}
@@ -49,7 +49,7 @@ input,select{width:100%;min-width:0;font:inherit;padding:8px;border-radius:6px;b
 const NM={14:'jordyn',11:'addie',10:'ariana',5:'veronica',18:'micaela',7:'amelia',3:'ella'};
 const ROST=[14,11,10,5,18,7,3];
 const z=()=>({a:0,p:0,o:0,n:0});
-const mk=()=>({us:0,them:0,srv:'us',ours:[0,0,0,0,0,0],their:[0,0,0,0,0,0],run:{us:z(),them:z()},last:{us:null,them:null},hist:[],log:[],rc:0,ev:[]});
+const mk=()=>({us:0,them:0,srv:'us',ours:[0,0,0,0,0,0],their:[0,0,0,0,0,0],run:{us:z(),them:z()},last:{us:null,them:null},hist:[],log:[],rc:0,ev:[],pairs:[]});
 var ui_lf=false;
 var SAVED=null;
 let games={1:mk(),2:mk(),3:mk()},G=1,S,tab='setup';
@@ -57,15 +57,17 @@ let M={team:'A team',opp:'',date:new Date().toISOString().slice(0,10),venue:'',g
 try{const s=JSON.parse(localStorage.getItem('hc3')||'null');if(s){games=s.games;G=s.G;M=s.M;SAVED=s;M.pairs=M.pairs||[];M.fmt=M.fmt||{games:3,to:25,to3:15,by2:true,cap:0};if(games[G].ev.length)tab='cap'}}catch(e){}
 try{ui_lf=localStorage.getItem('hcl')==='1'}catch(e){}
 S=games[G];
+function migPairs(){[1,2,3].forEach(g=>{if(!games[g].pairs)games[g].pairs=JSON.parse(JSON.stringify(M.pairs||[]))})}
+migPairs();
 function applyServe(){[1,2,3].forEach(g=>{const x=games[g];if(!x.ev.length&&!x.us&&!x.them)x.srv=g===1?M.g1:g===2?(M.g1==='us'?'them':'us'):(M.g3||x.srv)})}
 const GL=()=>M.fmt.games===2?[1,2]:[1,2,3];
 function over(g){const x=games[g],t=g===3?M.fmt.to3:M.fmt.to,a=x.us,b=x.them,d=M.fmt.by2?2:1;if(M.fmt.cap&&Math.max(a,b)>=M.fmt.cap&&a!==b)return a>b?'us':'them';if(Math.max(a,b)>=t&&Math.abs(a-b)>=d)return a>b?'us':'them';return null}
 function setToss(t){M.g3=t;applyServe();save();R()}
 function lay(){ui.lf=!ui.lf;try{localStorage.setItem('hcl',ui.lf?'1':'0')}catch(e){}R()}
-function subsFor(ours,srv){const m=[];M.pairs.forEach(p=>{if(!p.a||!p.b)return;const eA=z=>p.az.includes(z)&&(z!==1||srv==='us');[[p.a,p.b,z=>eA(z)],[p.b,p.a,z=>!eA(z)]].forEach(([x,y,ok])=>{const i=ours.indexOf(x);if(i>=0&&!ok(i+1)&&ours.indexOf(y)<0){ours[i]=y;m.push({in:y,out:x,z:i+1})}})});return m}
+function subsFor(ours,srv){const m=[];S.pairs.forEach(p=>{if(!p.a||!p.b)return;const eA=z=>p.az.includes(z)&&(z!==1||srv==='us');[[p.a,p.b,z=>eA(z)],[p.b,p.a,z=>!eA(z)]].forEach(([x,y,ok])=>{const i=ours.indexOf(x);if(i>=0&&!ok(i+1)&&ours.indexOf(y)<0){ours[i]=y;m.push({in:y,out:x,z:i+1})}})});return m}
 const subTxt=m=>m.map(x=>NM[x.in]+' in for '+NM[x.out]+' (Z'+x.z+')').join(' · ');
 function autoSubs(){const m=subsFor(S.ours,S.srv);if(m.length){S.note=subTxt(m);S.noteAt=Date.now()}}
-function subWatch(){if(!M.pairs.some(p=>p.a&&p.b))return null;const o=S.ours.slice(),res=[];let srv=S.srv,so=0;
+function subWatch(){if(!S.pairs.some(p=>p.a&&p.b))return null;const o=S.ours.slice(),res=[];let srv=S.srv,so=0;
  for(let i=1;i<=14&&res.length<2;i++){const side=srv==='them';if(side){o.push(o.shift());so++;srv='us'}else srv='them';const m=subsFor(o,srv);if(m.length)res.push({i,so,side,m})}return res}
 const subWhen=r=>r.side?(r.so===1?'on our next side-out':`on our side-out #${r.so} from now`):(r.so===0?'when we lose serve':`when we lose serve after ${r.so} side-out${r.so>1?'s':''}`);
 function fixSrv(t,i){if(!i)return;hp();S.note='';const f=i<=3?i:i-6;for(let x=0;x<Math.abs(f);x++)rot(t,f>0?1:-1);save();R()}
@@ -78,11 +80,11 @@ function goTab(t){tab=t;if(t==='setup')RSet();R()}
 function hdr(){document.getElementById('hd').innerHTML=`<div class="ent" style="flex:4"><div><b>${M.team}</b> vs ${M.opp||'?'} · Game ${G} · ${M.venue||'?'} · ${M.date}</div></div><button class="${tab==='setup'?'sel':''}" style="flex:.6" onclick="goTab('setup')">Setup</button><button class="${tab==='cap'?'sel':''}" style="flex:.6" onclick="goTab('cap')">Capture</button><button style="flex:.6" onclick="lay()">Layout</button>`}
 function setZ(i,v){v=+v;if(v){const j=S.ours.indexOf(v);if(j>=0)S.ours[j]=0}S.ours[i]=v;save();RSet()}
 function tg(key,lab){const c=M[key];return `<div class="fld"><span style="flex:1">${lab}</span><button class="${c==='us'?'pl sel':''}" onclick="M.${key}='us';applyServe();save();RSet();hdr()">We serve</button><button class="${c==='them'?'tp sel':''}" onclick="M.${key}='them';applyServe();save();RSet();hdr()">They serve</button>${key==='g3'?`<button class="${c?'':'sel'}" onclick="M.g3='';save();RSet()">Decide later</button>`:''}</div>`}
-function setPair(i,k,v){M.pairs[i][k]=+v;save();RSet()}
-function togZ(i,z){const a=M.pairs[i].az,j=a.indexOf(z);j>=0?a.splice(j,1):a.push(z);a.sort();save();RSet()}
-function pairUI(){return M.pairs.map((p,i)=>{const zs=[1,2,3,4,5,6],bz=zs.filter(z=>!p.az.includes(z)),
+function setPair(i,k,v){S.pairs[i][k]=+v;save();RSet()}
+function togZ(i,z){const a=S.pairs[i].az,j=a.indexOf(z);j>=0?a.splice(j,1):a.push(z);a.sort();save();RSet()}
+function pairUI(){return S.pairs.map((p,i)=>{const zs=[1,2,3,4,5,6],bz=zs.filter(z=>!p.az.includes(z)),
  sel=k=>`<select onchange="setPair(${i},'${k}',this.value)"><option value="0">-</option>${RS.map(n=>`<option value="${n}"${p[k]===n?' selected':''}>${n} ${NM[n]}</option>`).join('')}</select>`;
- return `<div class="pn" style="margin:6px 0"><div class="zg"><div><small>Player A</small>${sel('a')}</div><div><small>Player B (replaces A)</small>${sel('b')}</div><button style="align-self:end" onclick="M.pairs.splice(${i},1);save();RSet()">Remove</button></div>
+ return `<div class="pn" style="margin:6px 0"><div class="zg"><div><small>Player A</small>${sel('a')}</div><div><small>Player B (replaces A)</small>${sel('b')}</div><button style="align-self:end" onclick="S.pairs.splice(${i},1);save();RSet()">Remove</button></div>
  <div style="margin:6px 0"><small>Zones A plays:</small></div><div class="row">${zs.map(z=>`<button class="${p.az.includes(z)?'pl sel':''}" onclick="togZ(${i},${z})">Z${z}</button>`).join('')}</div>
  <div style="margin-top:6px"><b>${NM[p.a]||'A'}</b>: ${p.az.map(z=>'Z'+z+(z===1?' (serving)':'')).join(', ')||'none'}<br><b>${NM[p.b]||'B'}</b>: ${bz.map(z=>'Z'+z+(z===1?' (receiving)':'')).join(', ')||'none'}<br>Server: <b>${NM[p.az.includes(1)?p.a:p.b]||'?'}</b></div></div>`}).join('')}
 const csv=r=>r.map(x=>{x=String(x==null?'':x);return /[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x}).join(',');
@@ -113,10 +115,10 @@ const hist=()=>{try{return JSON.parse(localStorage.getItem('hch')||'[]')}catch(e
 function putHist(a){try{localStorage.setItem('hch',JSON.stringify(a))}catch(e){alert('Could not save match history (storage full). Export a backup first.')}}
 function archiveNow(){if(![1,2,3].some(g=>games[g].ev.length))return false;const a=hist();a.unshift({id:Date.now(),M:JSON.parse(JSON.stringify(M)),games:strip(games)});putHist(a);return true}
 function newMatch(){if(!confirm('Save this match to Saved matches and start a new, empty match?'))return;archiveNow();
- M={...M,opp:'',venue:'',date:new Date().toISOString().slice(0,10),g1:'us',g3:''};games={1:mk(),2:mk(),3:mk()};G=1;S=games[1];clr();ui.pk=null;applyServe();save();RSet();R()}
+ M={...M,opp:'',venue:'',date:new Date().toISOString().slice(0,10),g1:'us',g3:''};const old=games;games={1:mk(),2:mk(),3:mk()};[1,2,3].forEach(g=>{games[g].pairs=JSON.parse(JSON.stringify(old[g].pairs||[]))});G=1;S=games[1];clr();ui.pk=null;applyServe();save();RSet();R()}
 function openArch(i){const h=hist()[i];if(!h||!confirm('Open this saved match? The current match is saved to history first.'))return;
  archiveNow();const b=hist(),j=b.findIndex(x=>x.id===h.id);if(j>=0)b.splice(j,1);putHist(b);
- M=h.M;M.pairs=M.pairs||[];M.fmt=M.fmt||{games:3,to:25,to3:15,by2:true,cap:0};games=h.games;G=1;S=games[1];clr();ui.pk=null;save();RSet();R()}
+ M=h.M;M.pairs=M.pairs||[];M.fmt=M.fmt||{games:3,to:25,to3:15,by2:true,cap:0};games=h.games;migPairs();G=1;S=games[1];clr();ui.pk=null;save();RSet();R()}
 function delArch(i){if(!confirm('Delete this saved match?'))return;const a=hist();a.splice(i,1);putHist(a);RSet()}
 function exArch(i,k){const h=hist()[i];if(h)showEx(k,h.M,h.games)}
 function histUI(){const a=hist();if(!a.length)return '<div style="color:#999">No saved matches yet</div>';
@@ -134,7 +136,7 @@ function RSet(){const o=S.srv==='us'?'We':'They';
  <h4 style="margin-top:12px">Format</h4>
  <div class="fld"><span>Games</span>${[2,3].map(n=>`<button class="${M.fmt.games===n?'pl sel':''}" onclick="M.fmt.games=${n};save();RSet()">${n}</button>`).join('')}<span>Win by 2</span><button class="${M.fmt.by2?'g sel':''}" onclick="M.fmt.by2=!M.fmt.by2;save();RSet()">${M.fmt.by2?'Yes':'No'}</button></div>
  <div class="fld"><span>Play to</span><input type="number" inputmode="numeric" value="${M.fmt.to}" oninput="M.fmt.to=+this.value||25;save()"><span>Game 3 to</span><input type="number" inputmode="numeric" value="${M.fmt.to3}" oninput="M.fmt.to3=+this.value||15;save()"><span>Cap (0 none)</span><input type="number" inputmode="numeric" value="${M.fmt.cap||''}" oninput="M.fmt.cap=+this.value||0;save()"></div>
- <h4 style="margin-top:12px">Sub pairs</h4><div><small>Player A plays the zones you pick (Z1 only while serving) and Player B replaces A in the others. The app subs automatically.</small></div>${pairUI()}${M.pairs.length<2?`<button style="width:100%" onclick="M.pairs.push({a:0,b:0,az:[1,2,3,4]});save();RSet()">Add sub pair</button>`:''}
+ <h4 style="margin-top:12px">Sub pairs for game ${G}</h4>${G>1?`<button style="width:100%;margin:4px 0" onclick="if(confirm('Copy sub pairs from game ${G-1}?')){S.pairs=JSON.parse(JSON.stringify(games[${G-1}].pairs||[]));save();RSet()}">Copy sub pairs from game ${G-1}</button>`:''}<div><small>Player A plays the zones you pick (Z1 only while serving) and Player B replaces A in the others. The app subs automatically.</small></div>${pairUI()}${S.pairs.length<2?`<button style="width:100%" onclick="S.pairs.push({a:0,b:0,az:[1,2,3,4]});save();RSet()">Add sub pair</button>`:''}
  <h4 style="margin-top:12px">Starting lineup for game ${G}</h4><div class="row" style="margin:6px 0">${GL().map(g=>`<button class="${g===G?'sel':''}" onclick="G=${g};S=games[G];RSet();hdr()">Game ${g}</button>`).join('')}</div>
  <div>${o} serve first in game ${G}. Z1 is back right (server).</div>
  <h4 style="margin-top:8px">Our players</h4><div class="zg">${[3,2,1,4,5,0].map(i=>`<div><small>Z${i+1}</small><select onchange="setZ(${i},this.value)"><option value="0">-</option>${RS.map(n=>{const u=S.ours.indexOf(n),used=u>=0&&u!==i;return `<option value="${n}"${S.ours[i]===n?' selected':''}${used?' style="color:#888"':''}>${n} ${NM[n]}${used?' · in Z'+(u+1):''}</option>`}).join('')}</select></div>`).join('')}</div>
@@ -148,7 +150,7 @@ if(SAVED&&SAVED.ui){ui.pend=SAVED.ui.pend||null;ui.sel=SAVED.ui.sel||[];ui.their
 const EARN=['ace','spike','tip','dump','down ball hit'];
 const E1=['serve','spike','tip','dump','down ball hit','free ball out','block','whose ball?'];
 const E2=['receive','dig','set','free ball receive','2nd ball return','3rd ball return','in/out call','faults'];
-const snap=()=>JSON.stringify({...S,hist:0,ev:0,evn:S.ev.length,note:S.note||''});
+const snap=()=>JSON.stringify({...S,hist:0,ev:0,pairs:0,evn:S.ev.length,note:S.note||''});
 const hp=()=>{S.hist.push(snap());if(S.hist.length>80)S.hist.shift()};
 const FAULTS=['foot fault','net touch','double hit','lift / carry','rotation','over the net','center line','back row attack','other'];
 const RS=[...ROST].sort((a,b)=>a-b);
@@ -188,7 +190,7 @@ function clr(){ui.sel=[];ui.pend=null;ui.their=false}
 function act(t,k){const p=ui.pend;if(p&&p.t===t&&p.k===k&&ready()){commit();return}
  ui.pend={t,k,r:0};save();R()}
 function pick(n){const i=ui.sel.indexOf(n);i>=0?ui.sel.splice(i,1):ui.sel.length<2&&ui.sel.push(n);save();R()}
-function undo(){if(!S.hist.length)return;const h=S.hist,ev=S.ev,o=JSON.parse(h.pop());Object.assign(S,o);S.hist=h;S.ev=ev.slice(0,o.evn);clr();ui.pk=null;save();R()}
+function undo(){if(!S.hist.length)return;const h=S.hist,ev=S.ev,pr=S.pairs,o=JSON.parse(h.pop());Object.assign(S,o);S.hist=h;S.pairs=pr;S.ev=ev.slice(0,o.evn);clr();ui.pk=null;save();R()}
 function adj(d){hp();S[ui.edit]=Math.max(0,S[ui.edit]+d);save();R()}
 function chg(){ui.pk={team:S.srv,fix:1};R()}
 function setSrv(t){hp();S.note='';S.srv=t;autoSubs();save();R()}
